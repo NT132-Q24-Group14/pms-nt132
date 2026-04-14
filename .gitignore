@@ -46,4 +46,4 @@ logs/
 
 # Secrets and local config
 src/main/resources/db.properties
-.env
+*.env

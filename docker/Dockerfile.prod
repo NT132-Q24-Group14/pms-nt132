@@ -1,0 +1,26 @@
+FROM maven:3.9-eclipse-temurin-21 AS build
+
+WORKDIR /app
+COPY . .
+
+ARG db_host=db
+ARG db_name=pms
+ARG db_username=root
+ARG db_password=password
+
+RUN echo "db.url=jdbc:mysql://${db_host}:3306/${db_name}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC" > /app/src/main/resources/db.properties \
+    && echo "db.user=${db_username}" >> /app/src/main/resources/db.properties \
+    && echo "db.pass=${db_password}" >> /app/src/main/resources/db.properties
+
+RUN mvn clean package
+
+FROM tomcat:9.0
+
+RUN rm -rf /usr/local/tomcat/webapps/*
+
+COPY --from=build /app/target/pms.war /usr/local/tomcat/webapps/pms.war
+COPY ./docker/prod-entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 8080
+ENTRYPOINT ["/entrypoint.sh"]
