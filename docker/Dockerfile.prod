@@ -1,6 +1,6 @@
 FROM maven:3.9-eclipse-temurin-21
 
-RUN apt-get update && apt-get install -y wget && \
+RUN apt-get update && apt-get install -y wget gettext && \
     wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.85/bin/apache-tomcat-9.0.85.tar.gz && \
     tar -xzf apache-tomcat-9.0.85.tar.gz && \
     mv apache-tomcat-9.0.85 /opt/tomcat
@@ -11,6 +11,11 @@ COPY . .
 RUN mvn clean package
 
 RUN rm -rf /opt/tomcat/webapps/*
+
+RUN mkdir -p /opt/tomcat/webapps/pms && \
+    cd /opt/tomcat/webapps/pms && \
+    jar -xvf /app/target/pms.war
+
 RUN cp /app/target/pms.war /opt/tomcat/webapps/
 
 COPY ./docker/prod-entrypoint.sh /entrypoint.sh
