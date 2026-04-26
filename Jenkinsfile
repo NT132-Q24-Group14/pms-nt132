@@ -8,10 +8,10 @@ pipeline {
 
     environment {
         DB_CREDS = credentials('database-id')
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-id')
         db_name = 'pms'
         db_username = "${DB_CREDS_USR}"
         db_password = "${DB_CREDS_PSW}"
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-id')
     }
 
     stages {
@@ -23,9 +23,7 @@ pipeline {
 
         stage('Docker build and push') {
             steps {
-                sh 'echo ${DB_CREDS_USR}'
-
-                sh 'docker-compose build'
+                sh 'docker build --build-arg '
 
                 sh '''
                 echo $DOCKERHUB_CREDENTIALS_PSW | docker login \

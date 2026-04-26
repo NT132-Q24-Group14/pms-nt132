@@ -1,5 +1,5 @@
 # Create "db.properties" and replace the following example value by your database information
 # Next, right click on folder "resources" -> Mark Directory As -> Resources Root
-db.url=jdbc:mysql://localhost:3306/your_database_name
-db.user=root
-db.pass=your_database_password
+db.url=jdbc:mysql://${DB_HOST}:3306/${DB_NAME}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+db.user=${DB_CREDS_USR}
+db.pass=${DB_CREDS_PSW}
