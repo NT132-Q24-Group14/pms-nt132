@@ -24,7 +24,7 @@ pipeline {
         stage('Docker build and push') {
             steps {
                 sh '''
-                export db_host=10.140.0.5:3306
+                export db_host=10.140.0.5
                 export db_name=$db_name
                 export db_username=$db_username
                 export db_password=$db_password
