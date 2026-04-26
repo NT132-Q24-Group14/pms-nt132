@@ -1,18 +1,21 @@
-FROM maven:3.9-eclipse-temurin-21 AS build
+FROM maven:3.9-eclipse-temurin-21
+
+RUN apt-get update && apt-get install -y wget && \
+    wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.85/bin/apache-tomcat-9.0.85.tar.gz && \
+    tar -xzf apache-tomcat-9.0.85.tar.gz && \
+    mv apache-tomcat-9.0.85 /opt/tomcat
 
 WORKDIR /app
 COPY . .
 
 RUN mvn clean package
 
-FROM tomcat:9.0
+RUN rm -rf /opt/tomcat/webapps/*
+RUN cp /app/target/pms.war /opt/tomcat/webapps/
 
-RUN rm -rf /usr/local/tomcat/webapps/*
-
-COPY --from=build /app/target/pms.war /usr/local/tomcat/webapps/pms.war
-COPY --from=build /app/src/main/resources/db.properties.example /usr/local/tomcat/webapps/db.properties.template
 COPY ./docker/prod-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 8080
+
 ENTRYPOINT ["/entrypoint.sh"]

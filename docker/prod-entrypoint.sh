@@ -1,4 +1,4 @@
 #!/bin/bash
-envsubst < /usr/local/tomcat/db.properties.template > /usr/local/tomcat/webapps/pms/WEB-INF/classes/db.properties
+envsubst < /app/src/main/resources/db.properties.example > /opt/tomcat/webapps/pms/WEB-INF/classes/db.properties
 
-exec catalina.sh run
+exec /opt/tomcat/bin/catalina.sh run
