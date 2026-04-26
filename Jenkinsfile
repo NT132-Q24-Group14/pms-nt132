@@ -23,6 +23,8 @@ pipeline {
 
         stage('Docker build and push') {
             steps {
+                sh 'echo ${DB_CREDS_USR}'
+
                 sh 'docker-compose build'
 
                 sh '''
