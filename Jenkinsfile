@@ -7,9 +7,10 @@ pipeline {
     }
 
     environment {
+        DB_CREDS = credentials('database-id')
         db_name = 'pms'
-        db_username = 'user'
-        db_password = 'password'
+        db_username = "${DB_CREDS_USR}"
+        db_password = "${DB_CREDS_PSW}"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-id')
     }
 
