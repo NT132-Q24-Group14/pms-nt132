@@ -23,7 +23,7 @@ pipeline {
 
         stage('Docker build and push') {
             steps {
-                sh 'docker-compose build'
+                sh 'docker-compose build --no-cache'
 
                 sh '''
                 echo $DOCKERHUB_CREDENTIALS_PSW | docker login \
