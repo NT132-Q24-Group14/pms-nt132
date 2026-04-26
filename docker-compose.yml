@@ -4,11 +4,11 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile.prod
+      args:
+        db_host: ${db_host}
+        db_name: ${db_name}
+        db_username: ${db_username}
+        db_password: ${db_password}
     image: mothmon14682/pms:latest
-    environment:
-      - db_host=10.140.0.5:3306
-      - db_name=${db_name}
-      - db_username=${db_username}
-      - db_password=${db_password}
     ports:
       - "8080:8080"

@@ -23,7 +23,14 @@ pipeline {
 
         stage('Docker build and push') {
             steps {
-                sh 'docker-compose build --no-cache'
+                sh '''
+                export db_host=10.140.0.5:3306
+                export db_name=$db_name
+                export db_username=$db_username
+                export db_password=$db_password
+
+                docker-compose build
+                '''
 
                 sh '''
                 echo $DOCKERHUB_CREDENTIALS_PSW | docker login \
