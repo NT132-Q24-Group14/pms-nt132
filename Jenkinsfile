@@ -23,7 +23,7 @@ pipeline {
 
         stage('Docker build and push') {
             steps {
-                sh 'docker build --build-arg '
+                sh 'docker-compose build'
 
                 sh '''
                 echo $DOCKERHUB_CREDENTIALS_PSW | docker login \
