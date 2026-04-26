@@ -10,5 +10,3 @@ services:
         db_username: ${db_username}
         db_password: ${db_password}
     image: mothmon14682/pms:latest
-    ports:
-      - "8080:8080"
