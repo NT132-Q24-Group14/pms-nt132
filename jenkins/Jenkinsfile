@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'docker:latest'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
 
     environment {
         DB_CREDS = credentials('database-id')
@@ -44,7 +39,7 @@ pipeline {
 
         stage('Deploy via Ansible') {
             steps {
-                sh 'ansible-playbook -i app_inventory.ini deploy.yml'
+                sh 'ansible-playbook -i jenkins/app_inventory.ini jenkins/deploy.yml'
             }
         }
     }
