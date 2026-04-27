@@ -41,6 +41,12 @@ pipeline {
                 sh 'docker compose push'
             }
         }
+
+        stage('Deploy via Ansible') {
+            steps {
+                sh 'ansible-playbook -i app_inventory.ini deploy.yml'
+            }
+        }
     }
 
     post {
