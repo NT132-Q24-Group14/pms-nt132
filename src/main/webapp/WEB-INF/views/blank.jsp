@@ -2,7 +2,6 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
-    
 <!DOCTYPE html>
 	<!--
 	This is a starter template page. Use this page to start your new project from

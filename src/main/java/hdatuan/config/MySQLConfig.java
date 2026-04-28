@@ -1,33 +1,32 @@
 package hdatuan.config;
 
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.Properties;
 
 public class MySQLConfig {
+    public static Connection getConnection() {
+        Connection connection = null;
 
-	public static Connection getConnection() {
-		Connection connection = null;
-		Properties prop = new Properties();
-		try ( InputStream input = MySQLConfig.class.getClassLoader().getResourceAsStream("db.properties"))
-		{
-			if ( input == null ) {
-				System.out.println("Không tìm thấy file db.properties");
-				return null;
-			}
-			
-			prop.load(input);
-			String url = prop.getProperty("db.url");
-			String username = prop.getProperty("db.user");
-			String password = prop.getProperty("db.pass");
-														
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			connection = DriverManager.getConnection(url, username, password);
-		} catch (Exception e) {
-			System.out.println("Lỗi kết nối : " + e.getMessage());
-		}
-		return connection;
-	}
+        try {
+            String host = System.getenv("pms_db_host");
+            String db = System.getenv("pms_db_name");
+            String user = System.getenv("pms_db_username");
+            String pass = System.getenv("pms_db_password");
+
+            if (host == null || db == null || user == null || pass == null) {
+                throw new RuntimeException("Missing database environment variables");
+            }
+
+            String url = "jdbc:mysql://" + host + "/" + db;
+
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            connection = DriverManager.getConnection(url, user, pass);
+
+        } catch (Exception e) {
+            System.out.println("Lỗi kết nối: " + e.getMessage());
+        }
+
+        return connection;
+    }
 }
-

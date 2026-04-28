@@ -1,16 +1,12 @@
 pipeline {
-    agent {
-        docker {
-            image 'docker:latest'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
 
     environment {
-        db_name = 'pms'
-        db_username = 'user'
-        db_password = 'password'
+        DB_CREDS = credentials('database-id')
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-id')
+        pms_db_name = 'pms'
+        pms_db_username = "${DB_CREDS_USR}"
+        pms_db_password = "${DB_CREDS_PSW}"
     }
 
     stages {
@@ -20,9 +16,33 @@ pipeline {
             }
         }
 
+        stage('Build & Test') {
+            agent {
+                docker {
+                    image 'maven:3.9-eclipse-temurin-21'
+                    reuseNode true
+                    args '-v $HOME/.m2:/root/.m2'
+                }
+            }
+
+            steps {
+                withEnv([
+                    "pms_db_host=10.140.0.5",
+                    "pms_db_name=${pms_db_name}",
+                    "pms_db_username=${pms_db_username}",
+                    "pms_db_password=${pms_db_password}"
+                ]) {
+                    sh '''
+                        mvn -B -ntp clean test
+                        mvn -B -ntp package -DskipTests
+                    '''
+                }
+            }
+        }
+
         stage('Docker build and push') {
             steps {
-                sh 'docker-compose build'
+                sh 'docker build -t mothmon14682/pms:latest .'
 
                 sh '''
                 echo $DOCKERHUB_CREDENTIALS_PSW | docker login \
@@ -30,8 +50,38 @@ pipeline {
                   --password-stdin
                 '''
 
-                sh 'docker compose push'
+                sh 'docker push mothmon14682/pms:latest'
             }
+        }
+
+        stage('Chekout ansible repository') {
+            steps {
+                dir('ansible') {
+                    git branch: 'main',
+                        url: 'git@github.com:NT132-Q24-Group14/ansible.git',
+                        credentialsId: 'ansible-ssh-key'
+                }
+            }
+        }
+
+        stage('Deploy applicaion with Ansible') {
+            steps {
+                dir('ansible') {
+                    withCredentials([file(credentialsId: 'ansible-vault-id', variable: 'VAULT_PASS')]) {
+                        sh '''
+                        ansible-playbook playbooks/deploy-app.yml \
+                        --vault-password-file ${VAULT_PASS}
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // cleanup workspace
+            cleanWs()
         }
     }
 }
