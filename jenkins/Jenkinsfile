@@ -44,6 +44,7 @@ pipeline {
                 dir('ansible') {
                     git branch: 'main',
                         url: 'git@github.com:NT132-Q24-Group14/ansible.git'
+                        credentialsId: 'ansible-ssh-key'
                 }
             }
         }
