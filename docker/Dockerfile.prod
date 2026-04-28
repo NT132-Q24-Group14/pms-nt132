@@ -22,16 +22,11 @@ RUN mvn clean package
 
 RUN rm -rf /opt/tomcat/webapps/*
 
-RUN mkdir -p /opt/tomcat/webapps/pms && \
-    cd /opt/tomcat/webapps/pms && \
+RUN mkdir -p /opt/tomcat/webapps/ROOT && \
+    cd /opt/tomcat/webapps/ROOT && \
     jar -xvf /app/target/pms.war
 
-RUN cp /app/target/pms.war /opt/tomcat/webapps/
-
-
-RUN envsubst < /app/src/main/resources/db.properties.example \
-    > /opt/tomcat/webapps/pms/WEB-INF/classes/db.properties
+RUN envsubst < /app/src/main/resources/db.properties.example > /opt/tomcat/webapps/ROOT/WEB-INF/classes/db.properties
 
 EXPOSE 8080
-
 CMD ["/opt/tomcat/bin/catalina.sh", "run"]
