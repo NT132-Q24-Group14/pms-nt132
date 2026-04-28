@@ -4,6 +4,7 @@ pipeline {
     environment {
         DB_CREDS = credentials('database-id')
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-id')
+
         db_name = 'pms'
         db_username = "${DB_CREDS_USR}"
         db_password = "${DB_CREDS_PSW}"
@@ -37,9 +38,11 @@ pipeline {
             }
         }
 
-        stage('Deploy via Ansible') {
+        stage('Deploy applicaion with Ansible') {
             steps {
-                sh 'ansible-playbook -i jenkins/app_inventory.ini jenkins/deploy.yml'
+                withCredentials([file(credentialsId: 'ansible-vault-id', variable: 'VAULT_PASS')]) {
+                    sh 'ansible-playbook ~/ansible/playbooks/deploy-app.yml --vault-password-file ${VAULT_PASS} --list-tasks'
+                }
             }
         }
     }
