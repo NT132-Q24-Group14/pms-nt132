@@ -54,9 +54,26 @@ pipeline {
             }
         }
 
-        stage('Deploy via Ansible') {
+        stage('Chekout ansible repository') {
             steps {
-                sh 'ansible-playbook -i jenkins/app_inventory.ini jenkins/deploy.yml'
+                dir('ansible') {
+                    git branch: 'main',
+                        url: 'git@github.com:NT132-Q24-Group14/ansible.git',
+                        credentialsId: 'ansible-ssh-key'
+                }
+            }
+        }
+
+        stage('Deploy applicaion with Ansible') {
+            steps {
+                dir('ansible') {
+                    withCredentials([file(credentialsId: 'ansible-vault-id', variable: 'VAULT_PASS')]) {
+                        sh '''
+                        ansible-playbook playbooks/deploy-app.yml \
+                        --vault-password-file ${VAULT_PASS}
+                        '''
+                    }
+                }
             }
         }
     }
