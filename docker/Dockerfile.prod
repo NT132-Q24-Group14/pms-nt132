@@ -8,25 +8,13 @@ RUN apt-get update && apt-get install -y wget gettext && \
 WORKDIR /app
 COPY . .
 
-ARG db_host
-ARG db_name
-ARG db_username
-ARG db_password
-
-ENV db_host=$db_host
-ENV db_name=$db_name
-ENV db_username=$db_username
-ENV db_password=$db_password
-
-RUN mvn clean package
+RUN mvn package -DskipTests
 
 RUN rm -rf /opt/tomcat/webapps/*
 
 RUN mkdir -p /opt/tomcat/webapps/ROOT && \
     cd /opt/tomcat/webapps/ROOT && \
     jar -xvf /app/target/pms.war
-
-RUN envsubst < /app/src/main/resources/db.properties.example > /opt/tomcat/webapps/ROOT/WEB-INF/classes/db.properties
 
 EXPOSE 8080
 CMD ["/opt/tomcat/bin/catalina.sh", "run"]

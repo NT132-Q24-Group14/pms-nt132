@@ -4,9 +4,9 @@ pipeline {
     environment {
         DB_CREDS = credentials('database-id')
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-id')
-        db_name = 'pms'
-        db_username = "${DB_CREDS_USR}"
-        db_password = "${DB_CREDS_PSW}"
+        pms_db_name = 'pms'
+        pms_db_username = "${DB_CREDS_USR}"
+        pms_db_password = "${DB_CREDS_PSW}"
     }
 
     stages {
@@ -16,13 +16,31 @@ pipeline {
             }
         }
 
+        stage('Test') {
+            agent {
+                docker {
+                    image 'maven:3.9-eclipse-temurin-21'
+                }
+            }
+            steps {
+                withEnv([
+                        "pms_db_host=10.140.0.5",
+                        "pms_db_name=pms",
+                        "pms_db_username=${DB_CREDS_USR}",
+                        "pms_db_password=${DB_CREDS_PSW}"
+                ]) {
+                    sh 'mvn clean test'
+                }
+            }
+        }
+
         stage('Docker build and push') {
             steps {
                 sh '''
-                export db_host=10.140.0.5
-                export db_name=$db_name
-                export db_username=$db_username
-                export db_password=$db_password
+                export pms_db_host=10.140.0.5
+                export pms_db_name=$pms_db_name
+                export pms_db_username=$pms_db_username
+                export pms_db_password=$pms_db_password
 
                 docker-compose build
                 '''
