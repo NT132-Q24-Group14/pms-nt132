@@ -42,7 +42,7 @@ pipeline {
 
         stage('Docker build and push') {
             steps {
-                sh 'docker build -t mothmon14682/pms:latest -f docker/Dockerfile.prod .'
+                sh 'docker build -t mothmon14682/pms:latest .'
 
                 sh '''
                 echo $DOCKERHUB_CREDENTIALS_PSW | docker login \
