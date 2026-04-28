@@ -55,8 +55,7 @@ pipeline {
                     withCredentials([file(credentialsId: 'ansible-vault-id', variable: 'VAULT_PASS')]) {
                         sh '''
                         ansible-playbook playbooks/deploy-app.yml \
-                        --vault-password-file ${VAULT_PASS} \
-                        --list-tasks
+                        --vault-password-file ${VAULT_PASS}
                         '''
                     }
                 }
