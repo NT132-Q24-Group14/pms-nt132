@@ -16,35 +16,33 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Build & Test') {
             agent {
                 docker {
                     image 'maven:3.9-eclipse-temurin-21'
                     reuseNode true
+                    args '-v $HOME/.m2:/root/.m2'
                 }
             }
+
             steps {
                 withEnv([
-                        "pms_db_host=10.140.0.5",
-                        "pms_db_name=pms",
-                        "pms_db_username=${DB_CREDS_USR}",
-                        "pms_db_password=${DB_CREDS_PSW}"
+                    "pms_db_host=10.140.0.5",
+                    "pms_db_name=${pms_db_name}",
+                    "pms_db_username=${pms_db_username}",
+                    "pms_db_password=${pms_db_password}"
                 ]) {
-                    sh 'mvn clean test'
+                    sh '''
+                        mvn -B -ntp clean test
+                        mvn -B -ntp package -DskipTests
+                    '''
                 }
             }
         }
 
         stage('Docker build and push') {
             steps {
-                sh '''
-                export pms_db_host=10.140.0.5
-                export pms_db_name=$pms_db_name
-                export pms_db_username=$pms_db_username
-                export pms_db_password=$pms_db_password
-
-                docker-compose build
-                '''
+                sh 'docker build -t mothmon14682/pms:latest .'
 
                 sh '''
                 echo $DOCKERHUB_CREDENTIALS_PSW | docker login \
@@ -52,7 +50,7 @@ pipeline {
                   --password-stdin
                 '''
 
-                sh 'docker compose push'
+                sh 'docker push mothmon14682/pms:latest'
             }
         }
 
