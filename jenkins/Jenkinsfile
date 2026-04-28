@@ -4,6 +4,7 @@ pipeline {
     environment {
         DB_CREDS = credentials('database-id')
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-id')
+        GITHUB_PAT = credentials('github-token')
 
         db_name = 'pms'
         db_username = "${DB_CREDS_USR}"
@@ -38,10 +39,25 @@ pipeline {
             }
         }
 
+        stage('Chekout ansible repository') {
+            steps {
+                dir('ansible') {
+                    git branch: 'main',
+                        url: 'git@github.com:NT132-Q24-Group14/ansible.git'
+                }
+            }
+        }
+
         stage('Deploy applicaion with Ansible') {
             steps {
-                withCredentials([file(credentialsId: 'ansible-vault-id', variable: 'VAULT_PASS')]) {
-                    sh 'ansible-playbook ~/ansible/playbooks/deploy-app.yml --vault-password-file ${VAULT_PASS} --list-tasks'
+                dir('ansible') {
+                    withCredentials([file(credentialsId: 'ansible-vault-id', variable: 'VAULT_PASS')]) {
+                        sh '''
+                        ansible-playbook playbooks/deploy-app.yml \
+                        --vault-password-file ${VAULT_PASS} \
+                        --list-tasks
+                        '''
+                    }
                 }
             }
         }
