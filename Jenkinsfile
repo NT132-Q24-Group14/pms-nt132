@@ -42,15 +42,37 @@ pipeline {
 
         stage('Docker build and push') {
             steps {
-                sh 'docker build -t mothmon14682/pms:latest .'
+                script {
 
-                sh '''
-                echo $DOCKERHUB_CREDENTIALS_PSW | docker login \
-                  -u $DOCKERHUB_CREDENTIALS_USR \
-                  --password-stdin
-                '''
+                    def branch = (env.BRANCH_NAME ?: "unknown").replaceAll('/', '-')
+                    def tag = env.TAG_NAME
+                    def image = "mothmon14682/pms"
 
-                sh 'docker push mothmon14682/pms:latest'
+                    if (!tag) {
+                        echo "No tag detected → skipping build"
+                        return
+                    }
+
+                    echo "Building for tag: ${tag} on branch: ${branch}"
+
+                    if (branch == "main") {
+
+                        sh """
+                            docker build -t ${image}:latest .
+                            docker build -t ${image}:${tag} .
+
+                            docker push ${image}:latest
+                            docker push ${image}:${tag}
+                        """
+
+                    } else {
+                        sh """
+                            docker build -t ${image}:${tag} .
+
+                            docker push ${image}:${tag}
+                        """
+                    }
+                }
             }
         }
 
