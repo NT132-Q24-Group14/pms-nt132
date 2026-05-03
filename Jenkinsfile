@@ -40,17 +40,45 @@ pipeline {
             }
         }
 
+        stage('Building Git tag to Docker tag') {
+            when{
+                buildingTag()
+            }
+            steps{
+                sh """ 
+                    docker build -t mothmon14682/pms:latest -t mothmon14682/pms:${env.TAG_NAME} .
+
+                    docker push mothmon14682/pms:${env.TAG_NAME}
+                    docker push mothmon14682/pms:latest
+                """
+            }
+        }
+
         stage('Docker build and push') {
+            when {
+                not buildingTag()
+            }
             steps {
-                sh 'docker build -t mothmon14682/pms:latest .'
+                script {
 
-                sh '''
-                echo $DOCKERHUB_CREDENTIALS_PSW | docker login \
-                  -u $DOCKERHUB_CREDENTIALS_USR \
-                  --password-stdin
-                '''
+                    def branch = (env.BRANCH_NAME ?: "unknown").replaceAll('/', '-')
 
-                sh 'docker push mothmon14682/pms:latest'
+                    if (branch == "main") {
+
+                        sh """
+                            docker build -t mothmon14682/pms:stable .
+
+                            docker push mothmon14682/pms:stable
+                        """
+
+                    } else {
+                        sh """
+                            docker build -t mothmon14682/pms:${branch} .
+
+                            docker push mothmon14682/pms:${branch}
+                        """
+                    }
+                }
             }
         }
 
