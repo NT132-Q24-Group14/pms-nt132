@@ -62,16 +62,16 @@ pipeline {
                     if (branch == "main") {
 
                         sh """
-                            docker build -t ${image}:latest .
+                            docker build -t mothmon14682/pms:latest .
 
-                            docker push ${image}:latest
+                            docker push mothmon14682/pms:latest
                         """
 
                     } else {
                         sh """
-                            docker build -t ${image}:${branch} .
+                            docker build -t mothmon14682/pms:${branch} .
 
-                            docker push ${image}:${branch}
+                            docker push mothmon14682/pms:${branch}
                         """
                     }
                 }
