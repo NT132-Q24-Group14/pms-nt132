@@ -16,7 +16,7 @@
       sizes="16x16"
       href="${ctx}/plugins/images/favicon.png"
     />
-    <title>403 - Forbidden</title>
+    <title>404 File Not Found</title>
     <!-- Bootstrap Core CSS -->
     <link href="${ctx}/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- animation CSS -->
@@ -43,10 +43,10 @@
     <section id="wrapper" class="error-page">
       <div class="error-box">
         <div class="error-body text-center">
-          <h1>403</h1>
-          <h3 class="text-uppercase">Bạn không có quyền truy cập !</h3>
+          <h1>404</h1>
+          <h3 class="text-uppercase">File này không tồn tại !</h3>
           <p class="text-muted m-t-30 m-b-30">
-            YOU SEEM TO BE TRYING TO FIND HIS WAY HOME
+            Có vẻ bạn bị lạc
           </p>
           <a
             href="${ctx}/home"
