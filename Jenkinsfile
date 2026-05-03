@@ -40,36 +40,38 @@ pipeline {
             }
         }
 
+        stage('Building Git tag to Docker tag') {
+            when{
+                buildingTag()
+            }
+            steps{
+                sh """ 
+                    docker build -t mothmon14682/pms:${env.TAG_NAME} .
+
+                    docker push mothmon14682/pms:${env.TAG_NAME}
+                """
+            }
+        }
+
         stage('Docker build and push') {
             steps {
                 script {
 
                     def branch = (env.BRANCH_NAME ?: "unknown").replaceAll('/', '-')
-                    def tag = env.TAG_NAME
-                    def image = "mothmon14682/pms"
-
-                    if (!tag) {
-                        echo "No tag detected → skipping build"
-                        return
-                    }
-
-                    echo "Building for tag: ${tag} on branch: ${branch}"
 
                     if (branch == "main") {
 
                         sh """
                             docker build -t ${image}:latest .
-                            docker build -t ${image}:${tag} .
 
                             docker push ${image}:latest
-                            docker push ${image}:${tag}
                         """
 
                     } else {
                         sh """
-                            docker build -t ${image}:${tag} .
+                            docker build -t ${image}:${branch} .
 
-                            docker push ${image}:${tag}
+                            docker push ${image}:${branch}
                         """
                     }
                 }
