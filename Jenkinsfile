@@ -46,14 +46,18 @@ pipeline {
             }
             steps{
                 sh """ 
-                    docker build -t mothmon14682/pms:${env.TAG_NAME} .
+                    docker build -t mothmon14682/pms:latest -t mothmon14682/pms:${env.TAG_NAME} .
 
                     docker push mothmon14682/pms:${env.TAG_NAME}
+                    docker push mothmon14682/pms:latest
                 """
             }
         }
 
         stage('Docker build and push') {
+            when {
+                not buildingTag()
+            }
             steps {
                 script {
 
@@ -62,9 +66,9 @@ pipeline {
                     if (branch == "main") {
 
                         sh """
-                            docker build -t mothmon14682/pms:latest .
+                            docker build -t mothmon14682/pms:stable .
 
-                            docker push mothmon14682/pms:latest
+                            docker push mothmon14682/pms:stable
                         """
 
                     } else {
