@@ -100,7 +100,11 @@ pipeline {
                     withCredentials([file(credentialsId: 'ansible-vault-id', variable: 'VAULT_PASS')]) {
                         sh '''
                         ansible-playbook playbooks/deploy-app.yml \
-                        --vault-password-file ${VAULT_PASS}
+                        --vault-password-file ${VAULT_PASS} \
+                        -e "pms_db_host=${pms_db_host}" \
+                        -e "pms_db_name=${pms_db_name}" \
+                        -e "pms_db_username=${pms_db_username}" \
+                        -e "pms_db_password=${pms_db_password}"
                         '''
                     }
                 }
