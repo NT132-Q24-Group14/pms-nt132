@@ -56,7 +56,9 @@ pipeline {
 
         stage('Docker build and push') {
             when {
-                not buildingTag()
+                not {
+                    buildingTag()
+                }
             }
             steps {
                 script {
