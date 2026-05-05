@@ -210,7 +210,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="white-box">
-                        <h3 class="box-title">Sales Difference</h3>
+                        <h3 class="box-title">Chênh Lệch Doanh Số</h3>
                         <ul class="list-inline text-right">
                             <li>
                                 <h5><i class="fa fa-circle m-r-5" style="color: #dadada;"></i>Site A View</h5>
