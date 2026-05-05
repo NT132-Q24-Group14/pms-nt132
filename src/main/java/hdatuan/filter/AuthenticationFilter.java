@@ -23,7 +23,7 @@ public class AuthenticationFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
 
-        String context = req.getContextPath();
+        String contextPath = req.getContextPath();
         String uri = req.getRequestURI();
         String path = (uri.length() > contextPath.length())
                 ? uri.substring(contextPath.length())
