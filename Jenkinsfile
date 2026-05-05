@@ -41,6 +41,16 @@ pipeline {
             }
         }
 
+        stage('Docker login') {
+            steps {
+                sh '''
+                    printf '%s' "${DOCKERHUB_CREDENTIALS_PSW}" | docker login \
+                    --username "${DOCKERHUB_CREDENTIALS_USR}" \
+                    --password-stdin
+                '''
+            }
+        }
+
         stage('Building Git tag to Docker tag') {
             when{
                 buildingTag()
