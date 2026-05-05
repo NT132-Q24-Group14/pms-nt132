@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DB_CREDS = credentials('database-id')
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-id')
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-id-2')
         pms_db_host = '10.140.0.5'
         pms_db_name = 'pms'
         pms_db_username = "${DB_CREDS_USR}"
