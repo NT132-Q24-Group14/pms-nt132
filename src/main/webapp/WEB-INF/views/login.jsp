@@ -8,44 +8,23 @@ pageEncoding="UTF-8"%>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
+    <title>Đăng nhập | PMS</title>
     <link rel="stylesheet" type="text/css" href="${ctx}/css/login.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   </head>
   <body class="login-page">
     <div class="login-shell">
-      <span class="shape shape-one"></span>
-      <span class="shape shape-two"></span>
-
-      <section class="brand-panel">
-
-        <h1>Vận hành doanh nghiệp gọn gàng và thông suốt</h1>
-        <p>
-          Theo dõi công việc, chốt tiến độ dự án và quản lý nhân sự trên một hệ thống
-          đồng nhất.
-        </p>
-
-        <ul class="benefits">
-          <li>
-            <i class="fa-solid fa-circle-check"></i>
-            Dashboard trực quan tiến độ doanh nghiệp
-          </li>
-          <li>
-            <i class="fa-solid fa-circle-check"></i>
-            Quản lý công việc và dự án hiệu quả
-          </li>
-          <li>
-            <i class="fa-solid fa-circle-check"></i>
-            Theo dõi hiệu suất của nhân sự
-          </li>
-        </ul>
-      </section>
-
       <section class="auth-panel">
         <div class="auth-card">
+          <a class="brand-mark" href="${ctx}/login" aria-label="PMS">
+            <span>P</span>
+            <strong>PMS Workspace</strong>
+          </a>
+
           <div class="auth-head">
-            <h2>Đăng nhập</h2>
-            <p>Sử dụng tài khoản được cấp để truy cập hệ thống.</p>
+            <p class="eyebrow">Quản lý dự án nội bộ</p>
+            <h1>Đăng nhập</h1>
+            <p>Truy cập bảng điều khiển để theo dõi công việc, dự án và nhân sự.</p>
           </div>
 
           <form action="${ctx}/login" method="post" class="auth-form">
@@ -81,10 +60,12 @@ pageEncoding="UTF-8"%>
               </div>
             </div>
 
-            <label class="remember-wrap">
-              <input type="checkbox" name="remember" />
-              <span>Nhớ mật khẩu</span>
-            </label>
+            <div class="form-options">
+              <label class="remember-wrap">
+                <input type="checkbox" name="remember" />
+                <span>Nhớ mật khẩu</span>
+              </label>
+            </div>
 
             <c:if test="${not empty loginResult}">
               <div class="error-message">
@@ -93,10 +74,66 @@ pageEncoding="UTF-8"%>
               </div>
             </c:if>
 
-            <button type="submit" class="signin-btn">Đăng nhập</button>
+            <button type="submit" class="signin-btn">
+              <span>Đăng nhập</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
           </form>
         </div>
       </section>
+
+      <aside class="insight-panel" aria-label="Tổng quan hệ thống">
+        <div class="insight-top">
+          <span class="status-dot"></span>
+          <span>Workspace đang hoạt động</span>
+        </div>
+
+        <div class="hero-copy">
+          <h2>Điều phối công việc trong một màn hình tập trung.</h2>
+          <p>Kiểm soát tiến độ, phân quyền và danh sách thành viên với trải nghiệm nhẹ, rõ, dễ thao tác.</p>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <span class="metric-label">Dự án</span>
+            <strong>12</strong>
+            <small>đang theo dõi</small>
+          </div>
+          <div class="metric-card accent">
+            <span class="metric-label">Công việc</span>
+            <strong>84%</strong>
+            <small>có tiến độ</small>
+          </div>
+        </div>
+
+        <div class="activity-board">
+          <div class="board-head">
+            <span>Luồng hôm nay</span>
+            <i class="fa-solid fa-chart-simple"></i>
+          </div>
+          <div class="activity-row">
+            <i class="fa-solid fa-circle-check"></i>
+            <div>
+              <strong>Thiết kế database</strong>
+              <span>Đã hoàn thành</span>
+            </div>
+          </div>
+          <div class="activity-row">
+            <i class="fa-solid fa-clock"></i>
+            <div>
+              <strong>Phân tích hệ thống</strong>
+              <span>Đang thực hiện</span>
+            </div>
+          </div>
+          <div class="activity-row">
+            <i class="fa-solid fa-layer-group"></i>
+            <div>
+              <strong>Quản lý thành viên</strong>
+              <span>Sẵn sàng cập nhật</span>
+            </div>
+          </div>
+        </div>
+      </aside>
     </div>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
