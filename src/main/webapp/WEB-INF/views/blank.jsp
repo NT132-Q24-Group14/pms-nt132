@@ -32,6 +32,7 @@
 	          page. However, you can choose any other skin from folder css / colors .
 	-->
 	    <link href="${ctx}/css/colors/blue-dark.css" id="theme" rel="stylesheet">
+	    <link rel="stylesheet" href="${ctx}/css/custom.css">
 	    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	    <!--[if lt IE 9]>
