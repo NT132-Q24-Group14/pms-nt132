@@ -27,11 +27,9 @@
 ---
 
 ## Overview
-**Project Management System** is a cloned version of my original Java Servlet and JSP backend project. The original project focused on backend development for a role-based internal project management application.
+**Project Management System (NT132)** is a cloned version of a Java Servlet and JSP backend project. The original project focused on backend development for a role-based internal project management application.
 
 This repository was built for the **NT132** course at **UIT - University of Information Technology**. It focuses on the DevOps implementation around that application: packaging the backend as a WAR file, containerizing it with Docker, validating it through Jenkins, publishing Docker images, deploying it through an Ansible-based workflow, and connecting it with a monitoring system.
-
-The application still includes the original PMS features such as authentication, user management, role management, job management, task assignment, and a JSP/Bootstrap dashboard. In this repo, those features serve as the application workload used to demonstrate a CI/CD pipeline.
 
 ---
 
@@ -141,9 +139,6 @@ Use these commands to validate the application locally before running it through
 
 7.  **Open the app**
     *   URL: `http://localhost:8080/pms`
-    *   Admin: `admin@gmail.com` / `123456`
-    *   Manager: `manager01@gmail.com` / `123456`
-    *   Staff: `staff.dev01@gmail.com` / `123456`
 
 ---
 
