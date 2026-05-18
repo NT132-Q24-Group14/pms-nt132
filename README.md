@@ -1,13 +1,14 @@
 <div align="center">
 
 # Project Management System
-### A Modern Internal Work & Project Management Platform
+### DevOps CI/CD implementation for a cloned Java Servlet backend
 
-[![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
-[![Servlet](https://img.shields.io/badge/Servlet-Using%20v3.1-orange?style=for-the-badge)](https://jakarta.ee/specifications/servlet/)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
-[![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
-
+[![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
+[![Maven](https://img.shields.io/badge/Maven-3.9-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](https://maven.apache.org/)
+[![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-D24939?style=for-the-badge&logo=jenkins&logoColor=white)](https://www.jenkins.io/)
+[![Tomcat](https://img.shields.io/badge/Tomcat-9-F8DC75?style=for-the-badge&logo=apachetomcat&logoColor=black)](https://tomcat.apache.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-005C84?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 
 </div>
 
@@ -15,156 +16,147 @@
 
 ## Table of Contents
 - [Overview](#overview)
-- [Features](#features)
-- [System Architecture](#system-architecture)
+- [DevOps Scope](#devops-scope)
+- [Pipeline Overview](#pipeline-overview)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
 - [Project Structure](#project-structure)
-- [Contributing](#contributing)
 - [Authors](#authors)
 
 ---
 
 ## Overview
-**Project Management System** is a robust, enterprise-grade internal management tool designed to streamline team operations. It provides a centralized dashboard for tracking jobs, assigning tasks, and monitoring real-time progress across departments.
+**Project Management System** is a cloned version of my original Java Servlet and JSP backend project. The original project focused on backend development for a role-based internal project management application.
 
+This repository focuses on the DevOps implementation around that application: packaging the backend as a WAR file, containerizing it with Docker, validating it through Jenkins, publishing Docker images, and deploying it through an Ansible-based workflow.
 
-This application replaces scattered spreadsheets with a unified, role-based system that improves data integrity and operational transparency.
-
----
-
-## Features
-### Core Modules
-*   **Dynamic Dashboard**: Visual analytics showing task distribution (Not Started vs In Progress vs Completed).
-*   **User Management**: Full CRUD operations for system users with role assignment.
-*   **Role-Based Access Control (RBAC)**: secure permission system (e.g., Admin, Manager, Staff).
-*   **Job Management**: Create, edit, and archive projects with timeline tracking.
-*   **Task Management**: Granular task assignment linked to specific Jobs and Users.
-*   **User Profile**: Personal dashboard for users to update credentials and view assigned work.
+The application still includes the original PMS features such as authentication, user management, role management, job management, task assignment, and a JSP/Bootstrap dashboard. In this repo, those features serve as the application workload used to demonstrate a CI/CD pipeline.
 
 ---
 
-## System Architecture
-The project strictly follows the **Standard MVC (Model-View-Controller)** pattern to ensure scalability and maintainability.
+## DevOps Scope
+This repository demonstrates:
 
-| Layer | Responsibility | Components |
-|-------|---------------|------------|
-| **View** | User Interface | JSP, Bootstrap, JSTL |
-| **Controller** | Request Handling | Java Servlets, Filters |
-| **Service** | Business Logic | Java Classes (Service Layer) |
-| **Repository** | Data Access | JDBC, SQL Queries |
-| **Model** | Data Transfer | POJO Entities |
+*   **Maven build automation** for compiling, testing, and packaging the Java web application.
+*   **WAR packaging** with the final artifact generated as `target/pms.war`.
+*   **Docker containerization** using `tomcat:9-jdk21` as the runtime image.
+*   **Jenkins CI/CD orchestration** for checkout, test, package, image build, image push, and deployment.
+*   **Docker Hub publishing** with branch-aware and tag-aware image tags.
+*   **Ansible deployment integration** using a separate infrastructure repository.
+*   **Environment-based configuration** for database connection settings.
+
+---
+
+## Pipeline Overview
+The Jenkins pipeline is defined in `Jenkinsfile` and follows this flow:
+
+| Stage | Purpose |
+|-------|---------|
+| Checkout | Pull the application source from SCM. |
+| Build & Test | Run Maven inside `maven:3.9-eclipse-temurin-21`, execute tests, and package the WAR file. |
+| Docker Build & Push | Build the Tomcat image from `Dockerfile` and push it to Docker Hub. |
+| Tag Handling | Publish Git tag builds as both `latest` and the Git tag. |
+| Branch Handling | Publish `main` as `stable`; publish other branches using a branch-based Docker tag. |
+| Ansible Checkout | Pull the deployment automation from `NT132-Q24-Group14/ansible`. |
+| Deploy | Run the Ansible playbook with database variables and Ansible Vault credentials. |
+
+The generated Docker image copies `target/pms.war` into Tomcat as `ROOT.war`, so the containerized application is deployed automatically when Tomcat starts.
 
 ---
 
 ## Tech Stack
-### Backend
-*   **Language**: Java 8+
-*   **Core**: Java Servlet API, JSP
+### Application
+*   **Language**: Java 21
+*   **Web**: Java Servlet API, JSP, JSTL
 *   **Database**: MySQL 8.0
-*   **Security**: Filter-based Authentication & Session Management
+*   **Frontend**: Bootstrap 4, jQuery, JavaScript, Morris.js, DataTables
 
-### Frontend
-*   **Framework**: Bootstrap 4
-*   **Scripting**: jQuery, JavaScript
-*   **Visualization**: Morris.js (Charts), Toast (Notifications), DataTables
+### DevOps
+*   **Build Tool**: Maven
+*   **Local App Runner**: Cargo Maven plugin with embedded Tomcat 9
+*   **Container Runtime**: Docker
+*   **CI/CD**: Jenkins Pipeline
+*   **Image Registry**: Docker Hub
+*   **Deployment Automation**: Ansible
 
 ---
 
 ## Getting Started
+Use these commands to validate the application locally before running it through the CI/CD pipeline.
 
 ### Prerequisites
 *   JDK: [Java Development Kit (JDK 21+)](https://www.oracle.com/java/technologies/downloads/)
 *   Build Tool: [Apache Maven](https://maven.apache.org/download.cgi)
-*   Database: [MySQL Server 8.0+](https://dev.mysql.com/downloads/installer/) (or run as a container on Docker)
+*   Database: [MySQL Server 8.0+](https://dev.mysql.com/downloads/installer/) or Docker
 
-### Installation
+### Local Validation
 1.  **Clone the repository**
-    ```sh
-    git clone https://github.com/hdatuan/pms.git
-    cd pms
+    ```bash
+    git clone https://github.com/NT132-Q24-Group14/pms-nt132.git
+    cd pms-nt132
     ```
 
-2.  **Database Setup**
-    *   If you already have MySQL running, create a database named `pms`.
-    *   To run MySQL with Docker, use:
-        ```bash
-        docker run --name pms-mysql -e MYSQL_ROOT_PASSWORD=your_password -e MYSQL_DATABASE=pms -p 3306:3306 -d mysql:8.0
-        ```
-    *   Export the database connection variables used by the app:
-        ```bash
-        export pms_db_host=localhost:3306
-        export pms_db_name=pms
-        export pms_db_username=root
-        export pms_db_password=your_password
-        ```
+2.  **Start MySQL**
+    ```bash
+    docker run --name pms-mysql -e MYSQL_ROOT_PASSWORD=your_password -e MYSQL_DATABASE=pms -p 3306:3306 -d mysql:8.0
+    ```
 
-3.  **Build and test**
+3.  **Export database variables**
+    ```bash
+    export pms_db_host=localhost:3306
+    export pms_db_name=pms
+    export pms_db_username=root
+    export pms_db_password=your_password
+    ```
+
+4.  **Run tests**
     ```bash
     mvn clean test
     ```
 
-    To create the WAR file at `target/pms.war`, run:
+5.  **Package the WAR**
     ```bash
     mvn clean package
     ```
 
-4.  **Run the app from the terminal**
+6.  **Run locally with embedded Tomcat**
     ```bash
     mvn cargo:run
     ```
 
-5.  **Access the App**
-    * Open Browser: `http://localhost:8080/pms`
-    * **Default Credentials**:
-        * **Admin**: `admin@gmail.com` / `123456`
-        * **Manager**: `manager01@gmail.com` / `123456`
-        * **Staff**: `staff.dev01@gmail.com` / `123456`
+7.  **Open the app**
+    *   URL: `http://localhost:8080/pms`
+    *   Admin: `admin@gmail.com` / `123456`
+    *   Manager: `manager01@gmail.com` / `123456`
+    *   Staff: `staff.dev01@gmail.com` / `123456`
 
 ---
 
 ## Project Structure
 
 ```bash
-pms_app/  # Runtime artifactId/context-path
-├── 📂 database   # included sample database 
-│
-├── 📂 src/main/java/hdatuan   # Core Backend Logic
-│   ├── 📂 config              # DB Connections (MySQLConfig)
-│   ├── 📂 controller          # Servlets (Login, Task, User...)
-│   ├── 📂 entity              # POJOs (User, Role, Job, Task)
-│   ├── 📂 filter              # Auth Filters
-│   ├── 📂 repository          # JDBC Data Access
-│   └── 📂 service             # Business Logic Layer
-│
-├── 📂 src/main/resources      # Configuration files
-│   ├── db.properties          # Configure your database
-│   └── db.properties.example  # Example of db.properties
-│
-├── 📂 src/main/webapp         # Frontend Assets
-│   ├── 📂 bootstrap           # CSS Framework
-│   ├── 📂 css / js            # Custom Styles & Scripts
-│   ├── 📂 plugins             # 3rd Party Libs (Charts, Tables)
-│   └── 📂 WEB-INF             # Protected Configuration
-│       ├── 📂 views           # JSP View Templates (Protected)
-│       └── 📂 lib             # JAR Dependencies
-│
-└── 📄 README.md               # Project Documentation
+pms-nt132/
+|-- Jenkinsfile              # Jenkins CI/CD pipeline
+|-- Dockerfile               # Tomcat 9 JDK 21 runtime image
+|-- pom.xml                  # Maven build, WAR packaging, Cargo runner
+|-- README.md                # Project documentation
+`-- src
+    |-- main
+    |   |-- java/hdatuan
+    |   |   |-- config       # MySQL connection setup
+    |   |   |-- controller   # Servlet controllers
+    |   |   |-- entity       # Domain entities
+    |   |   |-- filter       # Authentication filters
+    |   |   |-- repository   # JDBC data access
+    |   |   `-- service      # Business logic
+    |   |-- resources        # Application resources
+    |   `-- webapp           # JSP views and frontend assets
+    `-- test/java            # Unit tests
 ```
-
-
----
-
-## Contributing
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ---
 
 ## Authors
-**hdatuan** - *Backend Architecture & Development*
+**hdatuan** - Original backend developer and CI/CD implementer for this cloned project <br>
+**Mothmon14682** - CI/CD implementer <br>
+**Truo367** - monitoring system
