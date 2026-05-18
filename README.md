@@ -1,7 +1,7 @@
 <div align="center">
 
-# Project Management System
-### DevOps CI/CD implementation for a cloned Java Servlet backend
+# Project Management System (NT132)
+### DevOps CI/CD implementation for the NT132 Project at UIT
 
 [![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.java.com/)
 [![Maven](https://img.shields.io/badge/Maven-3.9-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](https://maven.apache.org/)
@@ -16,6 +16,7 @@
 
 ## Table of Contents
 - [Overview](#overview)
+- [Academic Context](#academic-context)
 - [DevOps Scope](#devops-scope)
 - [Pipeline Overview](#pipeline-overview)
 - [Tech Stack](#tech-stack)
@@ -28,9 +29,22 @@
 ## Overview
 **Project Management System** is a cloned version of my original Java Servlet and JSP backend project. The original project focused on backend development for a role-based internal project management application.
 
-This repository focuses on the DevOps implementation around that application: packaging the backend as a WAR file, containerizing it with Docker, validating it through Jenkins, publishing Docker images, and deploying it through an Ansible-based workflow.
+This repository was built for the **NT132** course at **UIT - University of Information Technology**. It focuses on the DevOps implementation around that application: packaging the backend as a WAR file, containerizing it with Docker, validating it through Jenkins, publishing Docker images, deploying it through an Ansible-based workflow, and connecting it with a monitoring system.
 
 The application still includes the original PMS features such as authentication, user management, role management, job management, task assignment, and a JSP/Bootstrap dashboard. In this repo, those features serve as the application workload used to demonstrate a CI/CD pipeline.
+
+---
+
+## Academic Context
+This project is part of the NT132 coursework at UIT. The main objective is to demonstrate how an existing backend application can be adapted into a complete DevOps workflow.
+
+The full course project is split across three repositories:
+
+| Repository | Purpose |
+|------------|---------|
+| [`pms-nt132`](https://github.com/NT132-Q24-Group14/pms-nt132) | Application source code, Dockerfile, and Jenkins CI/CD pipeline. |
+| [`ansible`](https://github.com/NT132-Q24-Group14/ansible) | Infrastructure automation and deployment playbooks used by the Jenkins pipeline. |
+| [`monitoring`](https://github.com/NT132-Q24-Group14/monitoring) | Monitoring and observability setup for the deployed system. |
 
 ---
 
@@ -43,6 +57,7 @@ This repository demonstrates:
 *   **Jenkins CI/CD orchestration** for checkout, test, package, image build, image push, and deployment.
 *   **Docker Hub publishing** with branch-aware and tag-aware image tags.
 *   **Ansible deployment integration** using a separate infrastructure repository.
+*   **Monitoring integration** using a separate monitoring repository.
 *   **Environment-based configuration** for database connection settings.
 
 ---
@@ -157,6 +172,10 @@ pms-nt132/
 ---
 
 ## Authors
-**hdatuan** - Original backend developer and CI/CD implementer for this cloned project <br>
-**Mothmon14682** - CI/CD implementer <br>
-**Truo367** - monitoring system
+This NT132 project was developed by a UIT student team:
+
+| Member | Contribution |
+|--------|--------------|
+| **hdatuan** | Original backend developer and CI/CD implementer for this cloned project. |
+| **Mothmon14682** | CI/CD implementer. |
+| **Truo367** | Monitoring system implementer. |
