@@ -74,10 +74,9 @@ The project strictly follows the **Standard MVC (Model-View-Controller)** patter
 ## Getting Started
 
 ### Prerequisites
-*   JDK: [Java Development Kit (JDK 8+)](https://www.oracle.com/java/technologies/downloads/)
-*   Web Server: [Apache Tomcat 9.0](https://tomcat.apache.org/download-90.cgi)
+*   JDK: [Java Development Kit (JDK 21+)](https://www.oracle.com/java/technologies/downloads/)
+*   Build Tool: [Apache Maven](https://maven.apache.org/download.cgi)
 *   Database: [MySQL Server 8.0+](https://dev.mysql.com/downloads/installer/) (or run as a container on Docker)
-*   IDE: [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) (Ultimate Edition is recommended or Community Edition with Smart Tomcat plugin)
 
 ### Installation
 1.  **Clone the repository**
@@ -87,33 +86,35 @@ The project strictly follows the **Standard MVC (Model-View-Controller)** patter
     ```
 
 2.  **Database Setup**
-    *   Open MySQL Workbench or CLI.
-    *   Execute the script located at `/database/schema.sql` (if available) or create a database named `pms`.
-    *   Update database credentials in `src/main/resources/db.properties`:
-        ```properties
-        db.url=jdbc:mysql://localhost:3306/pms
-        db.user=root
-        db.password=your_password
+    *   If you already have MySQL running, create a database named `pms`.
+    *   To run MySQL with Docker, use:
+        ```bash
+        docker run --name pms-mysql -e MYSQL_ROOT_PASSWORD=your_password -e MYSQL_DATABASE=pms -p 3306:3306 -d mysql:8.0
         ```
-    * Since you are working with Docker, you can quickly spin up the database environment without local installation using the following command:
-         ```bash
-      docker run --name pms-mysql -e MYSQL_ROOT_PASSWORD=your_password -e MYSQL_DATABASE=pms -p 3306:3306 -d mysql:8.0
-         ```
-       
-3.  **IDE Setup (IntelliJ IDEA)**
-    *   `File` -> `Open` and navigate to the project root directory.
-    *   `File` -> `Project Structure`.
-        * Under **Modules**, ensure `src/main/java` is marked as **Sources** and `src/main/webapp` is recognized as a **Web Resource Directory**.
-        * Under **Libraries**, click the **+** icon and add all `.jar` files from `src/main/webapp/WEB-INF/lib` to resolve dependencies.
-    * **Tomcat Server Setup**:
-        * Go to `Run` -> `Edit Configurations...`.
-        * Click the **+** icon, select **Tomcat Server** -> **Local**.
-        * In the **Server** tab, configure the path to your Tomcat 9.0 installation.
-        * In the **Deployment** tab, click **+** -> **Artifact** and select `pms:war exploded`.
-        * Set the **Application context** to `/pms`.
+    *   Export the database connection variables used by the app:
+        ```bash
+        export pms_db_host=localhost:3306
+        export pms_db_name=pms
+        export pms_db_username=root
+        export pms_db_password=your_password
+        ```
 
-4.  **Access the App**
-    * Click the **Run** icon in IntelliJ.  
+3.  **Build and test**
+    ```bash
+    mvn clean test
+    ```
+
+    To create the WAR file at `target/pms.war`, run:
+    ```bash
+    mvn clean package
+    ```
+
+4.  **Run the app from the terminal**
+    ```bash
+    mvn cargo:run
+    ```
+
+5.  **Access the App**
     * Open Browser: `http://localhost:8080/pms`
     * **Default Credentials**:
         * **Admin**: `admin@gmail.com` / `123456`
@@ -167,4 +168,3 @@ Contributions are what make the open source community such an amazing place to l
 
 ## Authors
 **hdatuan** - *Backend Architecture & Development*
-
