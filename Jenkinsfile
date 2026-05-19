@@ -35,7 +35,7 @@ pipeline {
                 ]) {
                     sh '''
                         mvn -B -ntp clean test
-                        mvn -B -ntp package -DskipTests
+                        mvn -B -ntp package cargo:configure -DskipTests
                     '''
                 }
             }
