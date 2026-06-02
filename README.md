@@ -16,129 +16,77 @@
 
 ## Table of Contents
 - [Overview](#overview)
-- [Academic Context](#academic-context)
-- [DevOps Scope](#devops-scope)
-- [Pipeline Overview](#pipeline-overview)
+- [Demo](#demo)
+- [Project Repositories](#project-repositories)
 - [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
+- [CI/CD Pipeline](#cicd-pipeline)
+- [Deployment Strategy](#deployment-strategy)
 - [Project Structure](#project-structure)
 - [Authors](#authors)
 
 ---
 
 ## Overview
-**Project Management System (NT132)** is a cloned version of a Java Servlet and JSP backend project. The original project focused on backend development for a role-based internal project management application.
+**Project Management System (NT132)** is a cloned Java Servlet and JSP web application. The original project focused on backend development for a role-based internal project management system.
 
-This repository was built for the **NT132** course at **UIT - University of Information Technology**. It focuses on the DevOps implementation around that application: packaging the backend as a WAR file, containerizing it with Docker, validating it through Jenkins, publishing Docker images, deploying it through an Ansible-based workflow, and connecting it with a monitoring system.
+This project was built for the **NT132** course at **UIT - University of Information Technology**. It demonstrates a CI/CD workflow around the application, including Maven build automation, Docker image publishing, Ansible deployment, Blue-Green Deployment, Zero-Downtime rollback and rollforward, and monitoring with Prometheus, Loki, and Grafana.
+
+Original project: [pms](https://github.com/hdatuan/pms)
 
 ---
 
-## Academic Context
-This project is part of the NT132 coursework at UIT. The main objective is to demonstrate how an existing backend application can be adapted into a complete DevOps workflow.
+## Demo
+Demo videos: [Google Drive Demo](https://drive.google.com/drive/folders/1JZ8IEu9yE_PF3mmEs4Q1oOkJnwZVmE-2?usp=drive_link)
 
-The full course project is split across three repositories:
+---
+
+## Project Repositories
+The full project is organized across three repositories:
 
 | Repository | Purpose |
 |------------|---------|
-| [`pms-nt132`](https://github.com/NT132-Q24-Group14/pms-nt132) | Application source code, Dockerfile, and Jenkins CI/CD pipeline. |
-| [`ansible`](https://github.com/NT132-Q24-Group14/ansible) | Infrastructure automation and deployment playbooks used by the Jenkins pipeline. |
-| [`monitoring`](https://github.com/NT132-Q24-Group14/monitoring) | Monitoring and observability setup for the deployed system. |
-
----
-
-## DevOps Scope
-This repository demonstrates:
-
-*   **Maven build automation** for compiling, testing, and packaging the Java web application.
-*   **WAR packaging** with the final artifact generated as `target/pms.war`.
-*   **Docker containerization** using `tomcat:9-jdk21` as the runtime image.
-*   **Jenkins CI/CD orchestration** for checkout, test, package, image build, image push, and deployment.
-*   **Docker Hub publishing** with branch-aware and tag-aware image tags.
-*   **Ansible deployment integration** using a separate infrastructure repository.
-*   **Monitoring integration** using a separate monitoring repository.
-*   **Environment-based configuration** for database connection settings.
-
----
-
-## Pipeline Overview
-The Jenkins pipeline is defined in `Jenkinsfile` and follows this flow:
-
-| Stage | Purpose |
-|-------|---------|
-| Checkout | Pull the application source from SCM. |
-| Build & Test | Run Maven inside `maven:3.9-eclipse-temurin-21`, execute tests, and package the WAR file. |
-| Docker Build & Push | Build the Tomcat image from `Dockerfile` and push it to Docker Hub. |
-| Tag Handling | Publish Git tag builds as both `latest` and the Git tag. |
-| Branch Handling | Publish `main` as `stable`; publish other branches using a branch-based Docker tag. |
-| Ansible Checkout | Pull the deployment automation from `NT132-Q24-Group14/ansible`. |
-| Deploy | Run the Ansible playbook with database variables and Ansible Vault credentials. |
-
-The generated Docker image copies `target/pms.war` into Tomcat as `ROOT.war`, so the containerized application is deployed automatically when Tomcat starts.
+| [`pms-nt132`](https://github.com/NT132-Q24-Group14/pms-nt132) | Java application source code, Dockerfile, and Jenkins CI/CD pipelines. |
+| [`ansible`](https://github.com/NT132-Q24-Group14/ansible) | Ansible infrastructure automation and deployment playbooks used by Jenkins. |
+| [`monitoring`](https://github.com/NT132-Q24-Group14/monitoring) | Monitoring and observability setup with Prometheus, Loki, and Grafana. |
 
 ---
 
 ## Tech Stack
 ### Application
-*   **Language**: Java 21
-*   **Web**: Java Servlet API, JSP, JSTL
+*   **Backend**: Java 21, Java Servlet API, JSP, JSTL
 *   **Database**: MySQL 8.0
-*   **Frontend**: Bootstrap 4, jQuery, JavaScript, Morris.js, DataTables
+*   **Frontend**: Bootstrap 4, jQuery, JavaScript
 
-### DevOps
-*   **Build Tool**: Maven
-*   **Local App Runner**: Cargo Maven plugin with embedded Tomcat 9
-*   **Container Runtime**: Docker
-*   **CI/CD**: Jenkins Pipeline
-*   **Image Registry**: Docker Hub
-*   **Deployment Automation**: Ansible
+### CI/CD & Deployment
+*   **Build & Package**: Maven, WAR packaging
+*   **Runtime & Containerization**: Apache Tomcat 9, Docker
+*   **Automation**: Jenkins Pipeline, Docker Hub, Ansible
+*   **Release Strategy**: Blue-Green Deployment, rollback, rollforward
+
+### Monitoring & Observability
+*   **Metrics**: Prometheus
+*   **Logs**: Loki
+*   **Dashboards**: Grafana
 
 ---
 
-## Getting Started
-Use these commands to validate the application locally before running it through the CI/CD pipeline.
+## CI/CD Pipeline
+The workflow is organized into one main delivery pipeline and two release operation pipelines:
 
-### Prerequisites
-*   JDK: [Java Development Kit (JDK 21+)](https://www.oracle.com/java/technologies/downloads/)
-*   Build Tool: [Apache Maven](https://maven.apache.org/download.cgi)
-*   Database: [MySQL Server 8.0+](https://dev.mysql.com/downloads/installer/) or Docker
+| Pipeline | Main Responsibilities |
+|----------|-----------------------|
+| `Jenkinsfile` | Builds and tests the app, packages `target/pms.war`, builds and pushes Docker images, and deploys through Ansible. |
+| `Jenkinsfile.rollback` | Verifies a target Docker image tag and rolls the app back through the Ansible rollback playbook. |
+| `Jenkinsfile.rollforward` | Verifies a target Docker image tag and rolls the app forward through the Ansible rollforward playbook. |
 
-### Local Validation
-1.  **Clone the repository**
-    ```bash
-    git clone https://github.com/NT132-Q24-Group14/pms-nt132.git
-    cd pms-nt132
-    ```
+The Docker image copies `target/pms.war` into Tomcat as `ROOT.war`, so the application is deployed automatically when Tomcat starts.
 
-2.  **Start MySQL**
-    ```bash
-    docker run --name pms-mysql -e MYSQL_ROOT_PASSWORD=your_password -e MYSQL_DATABASE=pms -p 3306:3306 -d mysql:8.0
-    ```
+---
 
-3.  **Export database variables**
-    ```bash
-    export pms_db_host=localhost:3306
-    export pms_db_name=pms
-    export pms_db_username=root
-    export pms_db_password=your_password
-    ```
+## Deployment Strategy
+The deployment workflow uses **Blue-Green Deployment** to switch between prepared application versions in a controlled way.
 
-4.  **Run tests**
-    ```bash
-    mvn clean test
-    ```
-
-5.  **Package the WAR**
-    ```bash
-    mvn clean package
-    ```
-
-6.  **Run locally with embedded Tomcat**
-    ```bash
-    mvn cargo:run
-    ```
-
-7.  **Open the app**
-    *   URL: `http://localhost:8080/pms`
+The rollback and rollforward pipelines support **Zero-Downtime** release operations by moving the active deployment between existing image versions without rebuilding the application during the switch. Detailed infrastructure behavior is managed in the separate Ansible repository.
 
 ---
 
@@ -146,31 +94,25 @@ Use these commands to validate the application locally before running it through
 
 ```bash
 pms-nt132/
-|-- Jenkinsfile              # Jenkins CI/CD pipeline
+|-- Jenkinsfile              # Main Jenkins CI/CD pipeline
+|-- Jenkinsfile.rollback     # Rollback pipeline for switching to a previous image tag
+|-- Jenkinsfile.rollforward  # Rollforward pipeline for switching to a selected image tag
 |-- Dockerfile               # Tomcat 9 JDK 21 runtime image
-|-- pom.xml                  # Maven build, WAR packaging, Cargo runner
+|-- pom.xml                  # Maven build and WAR packaging configuration
 |-- README.md                # Project documentation
-`-- src
-    |-- main
-    |   |-- java/hdatuan
-    |   |   |-- config       # MySQL connection setup
-    |   |   |-- controller   # Servlet controllers
-    |   |   |-- entity       # Domain entities
-    |   |   |-- filter       # Authentication filters
-    |   |   |-- repository   # JDBC data access
-    |   |   `-- service      # Business logic
-    |   |-- resources        # Application resources
-    |   `-- webapp           # JSP views and frontend assets
+`-- src/                     # Java Servlet/JSP application source
+    |-- main/java            # Backend source code
+    |-- main/resources       # Application resources and configuration examples
+    |-- main/webapp          # JSP views and frontend assets
     `-- test/java            # Unit tests
 ```
 
 ---
 
 ## Authors
-This NT132 project was developed by a UIT student team:
 
 | Member | Contribution |
 |--------|--------------|
-| **hdatuan** | Original backend developer and CI/CD implementer for this cloned project. |
-| **Mothmon14682** | CI/CD implementer. |
-| **Truo367** | Monitoring system implementer. |
+| **hdatuan** | Original backend developer, CI/CD and monitoring implementer |
+| **Mothmon14682** | CI/CD implementer |
+| **Truo367** | Monitoring system implementer |
