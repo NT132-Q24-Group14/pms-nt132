@@ -10,49 +10,27 @@ pageEncoding="UTF-8"%>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
     <link rel="stylesheet" type="text/css" href="${ctx}/css/login.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   </head>
   <body class="login-page">
     <div class="login-shell">
-      <span class="shape shape-one"></span>
-      <span class="shape shape-two"></span>
-
-      <section class="brand-panel">
-
-        <h1>Vận hành doanh nghiệp gọn gàng và thông suốt</h1>
-        <p>
-          Theo dõi công việc, chốt tiến độ dự án và quản lý nhân sự trên một hệ thống
-          đồng nhất.
-        </p>
-
-        <ul class="benefits">
-          <li>
-            <i class="fa-solid fa-circle-check"></i>
-            Dashboard trực quan tiến độ doanh nghiệp
-          </li>
-          <li>
-            <i class="fa-solid fa-circle-check"></i>
-            Quản lý công việc và dự án hiệu quả
-          </li>
-          <li>
-            <i class="fa-solid fa-circle-check"></i>
-            Theo dõi hiệu suất của nhân sự
-          </li>
-        </ul>
-      </section>
-
       <section class="auth-panel">
         <div class="auth-card">
+          <div class="brand-lockup">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span>Project Management System</span>
+          </div>
+
           <div class="auth-head">
-            <h2>Đăng nhập</h2>
-            <p>Sử dụng tài khoản được cấp để truy cập hệ thống.</p>
+            <p class="eyebrow">Secure access</p>
+            <h1>Đăng nhập</h1>
+            <p>Tiếp tục vào không gian quản lý công việc của bạn.</p>
           </div>
 
           <form action="${ctx}/login" method="post" class="auth-form">
             <div class="field-group">
               <label for="email">Email</label>
               <div class="input-wrap">
-                <i class="fa-regular fa-envelope"></i>
+                <span class="input-icon email-icon" aria-hidden="true"></span>
                 <input
                   id="email"
                   type="email"
@@ -67,7 +45,7 @@ pageEncoding="UTF-8"%>
             <div class="field-group">
               <label for="password">Mật khẩu</label>
               <div class="input-wrap password-wrap">
-                <i class="fa-solid fa-lock"></i>
+                <span class="input-icon lock-icon" aria-hidden="true"></span>
                 <input id="password" type="password" name="password" placeholder="Nhập mật khẩu" required />
                 <button
                   id="togglePassword"
@@ -76,7 +54,6 @@ pageEncoding="UTF-8"%>
                   aria-label="Hiện mật khẩu"
                   aria-pressed="false"
                 >
-                  <i class="fa-regular fa-eye-slash"></i>
                 </button>
               </div>
             </div>
@@ -88,7 +65,7 @@ pageEncoding="UTF-8"%>
 
             <c:if test="${not empty loginResult}">
               <div class="error-message">
-                <i class="fa-solid fa-circle-exclamation"></i>
+                <span class="error-icon" aria-hidden="true"></span>
                 <span>${loginResult}</span>
               </div>
             </c:if>
@@ -97,12 +74,43 @@ pageEncoding="UTF-8"%>
           </form>
         </div>
       </section>
+
+      <section class="visual-panel" aria-hidden="true">
+        <div class="panel-topline">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <div class="visual-content">
+          <div class="status-row">
+            <span class="status-dot"></span>
+            <span>Workspace ready</span>
+          </div>
+
+          <div class="progress-visual">
+            <div class="progress-ring">
+              <span>86</span>
+            </div>
+            <div class="progress-copy">
+              <strong>Executive view</strong>
+              <span>Tasks, projects, roles</span>
+            </div>
+          </div>
+
+          <div class="mini-board">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      </section>
     </div>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-	<script src="${ctx}/js/common.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="${ctx}/js/common.js"></script>
     <script>
       (function () {
         var passwordInput = document.getElementById('password');
@@ -118,9 +126,6 @@ pageEncoding="UTF-8"%>
 
           toggleBtn.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
           toggleBtn.setAttribute('aria-label', isHidden ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
-          toggleBtn.innerHTML = !isHidden
-            ? '<i class="fa-regular fa-eye-slash"></i>'
-            : '<i class="fa-regular fa-eye"></i>';
         });
       })();
     </script>
