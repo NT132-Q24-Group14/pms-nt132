@@ -1,0 +1,89 @@
+pipeline {
+    agent any
+    environment {
+        DB_CREDS = credentials('database-id')
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-id')
+        pms_db_host = '10.140.0.5'
+        pms_db_name = 'pms'
+        pms_db_username = "${DB_CREDS_USR}"
+        pms_db_password = "${DB_CREDS_PSW}"
+    }
+    parameters {
+        string(
+            name: 'IMAGE_TAG',
+            defaultValue: 'v0.0.7',
+            description: 'Tag Docker image muốn rollback về'
+        )
+    }
+    stages {
+        stage('Validate Tag') {
+            steps {
+                script {
+                    if (!params.IMAGE_TAG?.trim()) {
+                        error "IMAGE_TAG is empty"
+                    }
+                }
+            }
+        }
+        stage('Docker login') {
+            steps {
+                sh '''
+                    printf '%s' "${DOCKERHUB_CREDENTIALS_PSW}" | docker login \
+                    --username "${DOCKERHUB_CREDENTIALS_USR}" \
+                    --password-stdin
+                '''
+            }
+        }
+        stage('Verify Image Exists') {
+            steps {
+                script {
+                    def result = sh(
+                        script: "docker manifest inspect mothmon14682/pms:${params.IMAGE_TAG} > /dev/null 2>&1",
+                        returnStatus: true
+                    )
+                    if (result != 0) {
+                        error "Image mothmon14682/pms:${params.IMAGE_TAG} is not exist"
+                    }
+                }
+            }
+        }
+        stage('Checkout Ansible Repository') {
+            steps {
+                dir('ansible') {
+                    git branch: 'main',
+                        url: 'git@github.com:NT132-Q24-Group14/ansible.git',
+                        credentialsId: 'ansible-ssh-key'
+                }
+            }
+        }
+        stage('Rollback with Ansible') {
+            steps {
+                dir('ansible') {
+                    withCredentials([file(credentialsId: 'ansible-vault-id', variable: 'VAULT_PASS')]) {
+                        withEnv(["IMAGE_TAG=${params.IMAGE_TAG}"]) {
+                            sh '''
+                            ansible-playbook playbooks/rollback-app.yml \
+                            --vault-password-file "$VAULT_PASS" \
+                            -e "image_tag=$IMAGE_TAG" \
+                            -e "db_host=$pms_db_host" \
+                            -e "db_name=$pms_db_name" \
+                            -e "db_username=$pms_db_username" \
+                            -e "db_password=$pms_db_password"
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            echo "Rollback to mothmon14682/pms:${params.IMAGE_TAG} successfully"
+            cleanWs()
+        }
+        failure {
+            echo "Failed rollback"
+            cleanWs()
+        }
+    }
+}
